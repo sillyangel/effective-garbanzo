@@ -39,7 +39,11 @@ export default function RootLayout({
               width={40}
               height={40}
             />
-            <h1 className="text-2xl font-bold">angel&apos;s awesome minecraft mods</h1>
+            {/* Laptop or larger header */}
+            <h1 className="text-2xl font-bold hidden md:block">angel&apos;s awesome minecraft mods</h1>
+            {/* Mobile header */}
+            <h1 className="text-sm font-bold md:hidden">angel&apos;s awesome minecraft mods</h1>
+
           </div>
           <a
             href="https://github.com/sillyangel"
