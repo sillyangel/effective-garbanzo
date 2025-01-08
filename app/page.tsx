@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 // import { Separator } from "@/components/ui/separator"
@@ -7,7 +8,8 @@ import { useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react"
 import { RxDownload } from "react-icons/rx";
  
-
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -24,6 +26,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
+// replace minecraft mod loader with nugget/nugget.json
 const minecraftmod = [
   {
     value: "Forge",
@@ -36,6 +39,21 @@ const minecraftmod = [
   {
     value: "Fabric",
     label: "Fabric"
+  }
+]
+// replace minecraft version with nugget/nugget.json
+const minecraftversion = [
+  {
+    value: "1.21",
+    label: "1.21",
+  },
+  {
+    value: "1.21.1",
+    label: "1.21.1",
+  },
+  {
+    value: "1.21.3",
+    label: "1.21.3"
   }
 ]
 
@@ -77,76 +95,147 @@ export default function Home() {
             </div>
             <p className="text-gray-400 mt-1">
               minecraft mod that adds the chicken nugget meme into minecraft with armor and tools along with horse armor and music disc and nugget block 
-              </p>
+            </p>
             <div className="mt-4">
-              <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-[220px] justify-between"
-                  >
-                    {value
-                      ? minecraftmod.find((minecraftmod) => minecraftmod.value === value)?.label
-                      : <><RxDownload className="mr-2 h-4 w-4" /> Select Mod Loader</>}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[200px] p-0">
-                  <Command>
-                    <CommandInput placeholder="Forge..." />
-                    <CommandList>
-                      <CommandEmpty>No Mod Loader found.</CommandEmpty>
-                      <CommandGroup>
-                        {minecraftmod.map((minecraftmod) => (
-                          <CommandItem
-                            key={minecraftmod.value}
-                            value={minecraftmod.value}
-                            onSelect={(currentValue) => {
-                              setValue(currentValue === value ? "" : currentValue)
-                              setOpen(false)
-                            }}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline"> <RxDownload className=""/> Download</Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Download</DialogTitle>
+                    <DialogDescription>
+                      download page for Nugget Mod
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label className="text-right">
+                        Mod Loader
+                      </Label>
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={open}
+                            className="w-[220px] justify-between"
                           >
-                            <div className="mr-2 ">
-                              {minecraftmod.value === "Forge" && <Image 
-                                src="/forge.svg"
-                                alt="Forge Logo"
-                                className="w-7 h-7"
-                                width={64}
-                                height={64}
-                              />}
-                              {minecraftmod.value === "NeoForge" && <Image
-                                src="/neoforged.svg"
-                                alt="NeoForge Logo"
-                                className="w-7 h-7"
-                                width={64}
-                                height={64}
-                              />}
-                              {minecraftmod.value === "Fabric" && <>
-                                <Image
-                                  src="/fabric.png"
-                                  alt="Fabric Logo"
-                                  className="w-7 h-7"
-                                  width={64}
-                                  height={64}
-                                />
-                              </>}
-                            </div>
-                            {minecraftmod.label}
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                value === minecraftmod.value ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+                            {value
+                              ? minecraftmod.find((minecraftmod) => minecraftmod.value === value)?.label
+                              : <>Select Mod Loader</>}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px] p-0">
+                          <Command>
+                            <CommandInput placeholder="Forge..." />
+                            <CommandList>
+                              <CommandEmpty>No Mod Loader found.</CommandEmpty>
+                              <CommandGroup>
+                                {minecraftmod.map((minecraftmod) => (
+                                  <CommandItem
+                                    key={minecraftmod.value}
+                                    value={minecraftmod.value}
+                                    onSelect={(currentValue) => {
+                                      setValue(currentValue === value ? "" : currentValue)
+                                      setOpen(false)
+                                    }}
+                                  >
+                                    <div className="mr-2 ">
+                                      {minecraftmod.value === "Forge" && <Image 
+                                        src="/forge.svg"
+                                        alt="Forge Logo"
+                                        className="w-7 h-7"
+                                        width={64}
+                                        height={64}
+                                      />}
+                                      {minecraftmod.value === "NeoForge" && <Image
+                                        src="/neoforged.svg"
+                                        alt="NeoForge Logo"
+                                        className="w-7 h-7"
+                                        width={64}
+                                        height={64}
+                                      />}
+                                      {minecraftmod.value === "Fabric" && <>
+                                        <Image
+                                          src="/fabric.png"
+                                          alt="Fabric Logo"
+                                          className="w-7 h-7"
+                                          width={64}
+                                          height={64}
+                                        />
+                                      </>}
+                                    </div>
+                                    {minecraftmod.label}
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        value === minecraftmod.value ? "opacity-100" : "opacity-0"
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <Label htmlFor="username" className="text-right">
+                        Minecraft Version
+                      </Label>
+                      <Popover open={open} onOpenChange={setOpen}>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            role="combobox"
+                            aria-expanded={open}
+                            className="w-[220px] justify-between"
+                          >
+                            {value
+                              ? minecraftversion.find((minecraftversion) => minecraftversion.value === value)?.label
+                              : <>Select Minecraft Version</>}
+                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[200px] p-0">
+                          <Command>
+                            <CommandInput placeholder="1.21..." />
+                            <CommandList>
+                              <CommandEmpty>No Version found.</CommandEmpty>
+                              <CommandGroup>
+                                {minecraftversion.map((minecraftversion) => (
+                                  <CommandItem
+                                    key={minecraftversion.value}
+                                    value={minecraftversion.value}
+                                    onSelect={(currentValue) => {
+                                      setValue(currentValue === value ? "" : currentValue)
+                                      setOpen(false)
+                                    }}
+                                  >
+                                    {minecraftversion.label}
+                                    <Check
+                                      className={cn(
+                                        "mr-2 h-4 w-4",
+                                        value === minecraftversion.value ? "opacity-100" : "opacity-0"
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit">Download</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
           </div>
@@ -155,3 +244,5 @@ export default function Home() {
       </>
   )
 }
+
+{/*  */}

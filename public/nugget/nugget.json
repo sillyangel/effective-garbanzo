@@ -1,0 +1,29 @@
+{
+    "forge": {
+        "1.2.2": {
+            "changelog": "Nugget Tools are now faster (about the same level as diamond)\nStone Pickaxe is now required to mine Nugget Block\nNugget Armor is same level as Netherite",
+            "supports": {
+                "1.21.3": "/nugget/forge/nuggetmod-1.2.2-1.21.3.jar",
+                "1.21.1": "/nugget/forge/nuggetmod-1.2.2-1.21.jar",
+                "1.21": "/nugget/forge/nuggetmod-1.2.2-1.21.jar"
+            }
+        },
+        "1.2.1": {
+            "changelog": "1.21.3 Verison\nFixed Up Lang Files and Updated es_mx.json\nFixed Armor Trims",
+            "supports": {
+                "1.21.3": "/nugget/forge/nuggetmod-1.2.1-1.21.3.jar",
+                "1.21.1": "/nugget/forge/nuggetmod-1.2.1-1.21.jar",
+                "1.21": "/nugget/forge/nuggetmod-1.2.1-1.21.jar"
+            }
+        }
+    },
+    "fabric": {
+        "1.2.2": {
+            "changelog":"Nugget Tools are now faster (about the same level as diamond)\nStone Pickaxe is now required to mine Nugget Block\nNugget Armor is same level as Netherite",
+            "supports": {
+                "1.21": "/nugget/fabric/nuggetmod-1.2.2-1.21-fabric.jar",
+                "1.21.1": "/nugget/fabric/nuggetmod-1.2.2-1.21-fabric.jar"
+            }
+        }
+    }
+}
