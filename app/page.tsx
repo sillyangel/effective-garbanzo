@@ -20,13 +20,7 @@ export default function Home() {
               <div>
                 <SiModrinth className="w-7 h-7" style={{ color: '#00AF5C' }} />
                 <SiCurseforge className="w-7 h-7" style={{ color: '#F16436' }} />
-                <Image
-                  src="/fabric-icon.png" // replace with the actual path to your fabric icon
-                  alt="Fabric Icon"
-                  className="w-7 h-7"
-                  width={28}
-                  height={28}
-                />
+                
               </div>
             </div>
             <p className="text-gray-400 mt-1">
