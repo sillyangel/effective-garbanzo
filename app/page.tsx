@@ -3,28 +3,26 @@
 
 import { SiModrinth, SiCurseforge } from '@icons-pack/react-simple-icons';
 import Image from "next/image";
-import { useState } from "react";
-import { Check, ChevronsUpDown } from "lucide-react"
+import { useState, useRef } from "react";
 import { RxDownload } from "react-icons/rx";
 import nuggetData from "@/public/nugget/nugget.json";
 
+interface NuggetData {
+  [key: string]: {
+    [version: string]: {
+      changelog: string;
+      supports: {
+        [minecraftVersion: string]: string;
+      };
+    };
+  };
+}
+
+const typedNuggetData: NuggetData = nuggetData;
+
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
 import {
   Select,
   SelectContent,
@@ -33,28 +31,70 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-// Generate minecraftmod and minecraftversion from nugget.json
 const minecraftmodloader = Object.keys(nuggetData).map(modLoader => ({
   value: modLoader,
   label: modLoader.charAt(0).toUpperCase() + modLoader.slice(1)
 }));
 
-const minecraftversion = Array.from(new Set(Object.values(nuggetData).flatMap(modLoader =>
-  Object.values(modLoader).flatMap(versionData =>
-    Object.keys(versionData.supports)
-  )
-))).map(version => ({
-  value: version,
-  label: version
-}));
-
 export default function Home() {
+  const [selectedModLoader, setSelectedModLoader] = useState("");
+  const [selectedVersion, setSelectedVersion] = useState("");
+  const boundingRef = useRef<DOMRect | null>(null);
+
+  // Filter minecraftversion based on selected mod loader
+  const minecraftversion = selectedModLoader
+    ? Array.from(new Set(Object.keys(nuggetData[selectedModLoader as keyof typeof nuggetData]).flatMap(version =>
+        Object.keys(typedNuggetData[selectedModLoader][version].supports)
+      ))).map(version => ({
+        value: version,
+        label: version
+      }))
+    : [];
+
+  // Generate download URL based on selected mod loader and version
+  const generateDownloadUrl = () => {
+    if (selectedModLoader && selectedVersion) {
+      const modLoaderData = nuggetData[selectedModLoader as keyof typeof nuggetData];
+      
+      for (const version in modLoaderData) {
+        const versionData = modLoaderData[version as keyof typeof modLoaderData] as {
+          supports: { [key: string]: string };
+        };
+  
+        if (versionData.supports[selectedVersion]) {
+          return versionData.supports[selectedVersion];
+        }
+      }
+    }
+    return "#";
+  };
+  
 
   return (
     <>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-          <div className="aspect-auto rounded-xl bg-muted/50 p-5">
+          <div className="p-5 grid auto-rows-min gap-4 md:grid-cols-3">
+          <div 
+          onMouseLeave={() => (boundingRef.current = null)}
+          onMouseEnter={(ev) => {
+            boundingRef.current = ev.currentTarget.getBoundingClientRect();
+          }}
+          onMouseMove={(ev) => {
+            if (!boundingRef.current) return;
+            const x = ev.clientX - boundingRef.current.left;
+            const y = ev.clientY - boundingRef.current.top;
+            const xPercentage = x / boundingRef.current.width;
+            const yPercentage = y / boundingRef.current.height;
+            const xRotation = (xPercentage - 0.2) * 20;
+            const yRotation = (0.2 - yPercentage) * 20;
+  
+            ev.currentTarget.style.setProperty("--x-rotation", `${yRotation}deg`);
+            ev.currentTarget.style.setProperty("--y-rotation", `${xRotation}deg`);
+            ev.currentTarget.style.setProperty("--x", `${xPercentage * 100}%`);
+            ev.currentTarget.style.setProperty("--y", `${yPercentage * 100}%`);
+          }}
+          className="aspect-auto rounded-xl bg-muted/50 p-5 group relative transition-transform ease-out "
+          >
             <Image
               src="/nuggetmod-icon.png" // replace with the actual path to your mod icon
               alt="Nugget Mod Icon"
@@ -102,15 +142,43 @@ export default function Home() {
                       <Label className="text-right">
                         Mod Loader
                       </Label>
-                      {/* Populate data from minecraftmodloader */}
-                      <Select>
+                      <Select onValueChange={(value) => setSelectedModLoader(value)}>
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select Mod Loader" />
                         </SelectTrigger>
                         <SelectContent>
                           {minecraftmodloader.map((modLoader) => (
                             <SelectItem key={modLoader.value} value={modLoader.value}>
-                              {modLoader.label}
+                              <div className="flex items-center">
+                                {modLoader.value === "forge" && (
+                                  <Image
+                                    src="/forge.svg"
+                                    alt="Forge Logo"
+                                    className="w-7 h-7 mr-2"
+                                    width={28}
+                                    height={28}
+                                  />
+                                )}
+                                {modLoader.value === "neoforge" && (
+                                  <Image
+                                    src="/neoforged.svg"
+                                    alt="NeoForge Logo"
+                                    className="w-7 h-7 mr-2"
+                                    width={28}
+                                    height={28}
+                                  />
+                                )}
+                                {modLoader.value === "fabric" && (
+                                  <Image
+                                    src="/fabric.png"
+                                    alt="Fabric Logo"
+                                    className="w-7 h-7 mr-2"
+                                    width={28}
+                                    height={28}
+                                  />
+                                )}
+                                {modLoader.label}
+                              </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -120,8 +188,7 @@ export default function Home() {
                       <Label htmlFor="minecraft-version" className="text-right">
                         Minecraft Version
                       </Label>
-                      {/* Populate data from minecraftversion */}
-                      <Select>
+                      <Select onValueChange={(value) => setSelectedVersion(value)}>
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select Minecraft Version" />
                         </SelectTrigger>
@@ -136,11 +203,14 @@ export default function Home() {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button type="submit">Download</Button>
+                    <Button onClick={() => window.open(generateDownloadUrl(), "_blank")}>
+                      Download
+                    </Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
+            <div className="pointer-events-none absolute inset-0 group-hover:bg-[radial-gradient(at_var(--x)_var(--y),rgba(255,255,255,0.05)_5%,transparent_50%)]" />
           </div>
           </div>
           <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
